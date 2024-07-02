@@ -7,6 +7,8 @@ import { TSAuth } from "../drizzle/schema";
 import { db } from "../drizzle/db"; // Ensure db is imported
 import { UsersTable } from "../drizzle/schema"; // Ensure UsersTable is imported
 
+
+
 // Register user
 export const signup = async (c: Context) => {
     try {
@@ -55,7 +57,9 @@ export const signup = async (c: Context) => {
     }
 };
 
-// Login user
+
+// auth.controller.ts
+
 export const loginUser = async (c: Context) => {
     try {
         const { username, password } = await c.req.json();
@@ -67,7 +71,11 @@ export const loginUser = async (c: Context) => {
         }
 
         console.log("User password from DB: ", user.password);
+        console.log("Entered password: ", password);
+
         const validPassword = await bcrypt.compare(password, user.password);
+        console.log("Password comparison result: ", validPassword);
+
         if (!validPassword) {
             return c.json({ error: "Invalid credentials" }, 401);
         }
