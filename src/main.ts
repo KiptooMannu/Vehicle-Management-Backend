@@ -6,6 +6,8 @@ import {userRouter}  from './Users/User.Router'
 import {bookingRouter} from './Booking/Booking.Router'
 import {vehicleSpecificationRouter} from './Vehiclespecification/Vehiclespecication.Router'
 import {authRouter} from './AUTH/auth.router'
+import paymentRouter from "./payment/payment.router";
+
 const app = new Hono().basePath("/api");
 
 // Default route
@@ -33,6 +35,7 @@ app.route("/", authRouter);
 app.route("/", bookingRouter);
 app.route("/", vehicleSpecificationRouter);
 app.route("/", userRouter);
+app.route("/", paymentRouter);
 
 
 
