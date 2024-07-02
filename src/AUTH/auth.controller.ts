@@ -4,25 +4,47 @@ import { Context } from "hono";
 import { createAuthUserService, userLoginService } from "./auth.service";
 import bcrypt from "bcrypt";
 import { TSAuth } from "../drizzle/schema";
+import { db } from "../drizzle/db"; // Ensure db is imported
+import { UsersTable } from "../drizzle/schema"; // Ensure UsersTable is imported
 
 // Register user
 export const signup = async (c: Context) => {
     try {
-        const user = await c.req.json();
+        const { full_name, email, contact_phone, address, username, password } = await c.req.json();
 
         // Check if user already exists
-        const existingUser = await userLoginService({ username: user.username } as TSAuth);
+        const existingUser = await userLoginService(username);
         if (existingUser) {
             return c.json({ error: "User already exists" }, 400);
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(user.password, 10);
-        user.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Hashed Password: ", hashedPassword);
 
-        // Create user
-        const createUser = await createAuthUserService(user);
-        if (typeof createUser !== 'string') {
+        // Insert into UsersTable
+        const newUser = await db.insert(UsersTable).values({
+            full_name,
+            email,
+            contact_phone,
+            address,
+        }).returning({ user_id: UsersTable.user_id }).execute();
+
+        if (newUser.length === 0) {
+            return c.json({ error: "Failed to create user" }, 400);
+        }
+
+        const userId = newUser[0].user_id;
+
+        // Create user in AuthOnUsersTable
+        const createUser = await createAuthUserService({
+            user_id: userId,
+            username,
+            email,
+            password: hashedPassword,
+        } as TSAuth);
+
+        if (!createUser) {
             return c.json({ error: "User not created" }, 400);
         }
 
@@ -36,11 +58,17 @@ export const signup = async (c: Context) => {
 // Login user
 export const loginUser = async (c: Context) => {
     try {
-        const credentials = await c.req.json();
+        const { username, password } = await c.req.json();
 
         // Check if user exists and credentials match
-        const user = await userLoginService(credentials);
+        const user = await userLoginService(username);
         if (!user) {
+            return c.json({ error: "Invalid credentials" }, 401);
+        }
+
+        console.log("User password from DB: ", user.password);
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
             return c.json({ error: "Invalid credentials" }, 401);
         }
 
