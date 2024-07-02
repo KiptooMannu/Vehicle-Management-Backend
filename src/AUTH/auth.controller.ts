@@ -4,11 +4,13 @@ import { Context } from "hono";
 import { createAuthUserService, userLoginService } from "./auth.service";
 import bcrypt from "bcrypt";
 import { TSAuth } from "../drizzle/schema";
-import { db } from "../drizzle/db"; // Ensure db is imported
-import { UsersTable } from "../drizzle/schema"; // Ensure UsersTable is imported
+import { db } from "../drizzle/db"; 
+import { UsersTable } from "../drizzle/schema"; 
+import jwt from "jsonwebtoken"; 
 
 
 
+const SECRET_KEY = "Mannu"
 // Register user
 export const signup = async (c: Context) => {
     try {
@@ -50,6 +52,9 @@ export const signup = async (c: Context) => {
             return c.json({ error: "User not created" }, 400);
         }
 
+
+
+
         return c.json({ message: "User created successfully" }, 201);
 
     } catch (error: any) {
@@ -80,7 +85,15 @@ export const loginUser = async (c: Context) => {
             return c.json({ error: "Invalid credentials" }, 401);
         }
 
-        return c.json({ message: "Login successful", user }, 200);
+         // Generate token
+         const token = jwt.sign(
+            { user_id: user.user_id, username: user.username, role: user.role },
+            SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+
+
+        return c.json({ message: "Login successful",token , user }, 200);
 
     } catch (error: any) {
         return c.json({ error: error?.message }, 400);
