@@ -1,0 +1,47 @@
+{
+  "scripts": {
+    "dev": "tsx watch ./src/main.ts",
+    "start": "node ./dist/main.js",
+    "build": "tsc",
+    "gen": "drizzle-kit generate",
+    "migrate": " tsx src/drizzle/migrate.ts",
+    "studio": "drizzle-kit studio",
+    "push": " drizzle-kit generate && tsx src/drizzle/migrate.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hono/node-server": "^1.11.2",
+    "@hono/zod-validator": "^0.2.2",
+    "@neondatabase/serverless": "^0.9.3",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.31.2",
+    "express": "^4.19.2",
+    "hono": "^4.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.13",
+    "pg": "^8.12.0",
+    "validators": "^0.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.14.2",
+    "@types/node-pg-migrate": "^2.3.1",
+    "@types/nodemailer": "^6.4.15",
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.22.8",
+    "node-pg-migrate": "^7.4.0",
+    "tsx": "^4.15.2",
+    "typescript": "^5.4.5"
+  }
+}
