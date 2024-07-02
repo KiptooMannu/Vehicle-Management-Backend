@@ -1,16 +1,13 @@
-// auth.controller.ts
-
 import { Context } from "hono";
-import { createAuthUserService, userLoginService } from "./auth.service";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { TSAuth } from "../drizzle/schema";
-import { db } from "../drizzle/db"; 
-import { UsersTable } from "../drizzle/schema"; 
-import jwt from "jsonwebtoken"; 
+import { db } from "../drizzle/db";
+import { UsersTable } from "../drizzle/schema";
+import { createAuthUserService, userLoginService } from "./auth.service";
 
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";; 
 
-
-const SECRET_KEY = "Mannu"
 // Register user
 export const signup = async (c: Context) => {
     try {
@@ -24,7 +21,6 @@ export const signup = async (c: Context) => {
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log("Hashed Password: ", hashedPassword);
 
         // Insert into UsersTable
         const newUser = await db.insert(UsersTable).values({
@@ -52,50 +48,42 @@ export const signup = async (c: Context) => {
             return c.json({ error: "User not created" }, 400);
         }
 
-
-
-
         return c.json({ message: "User created successfully" }, 201);
 
     } catch (error: any) {
-        return c.json({ error: error?.message }, 400);
+        console.error("Signup error:", error);
+        return c.json({ error: "Failed to create user" }, 500);
     }
 };
 
-
-// auth.controller.ts
-
+// Login user
 export const loginUser = async (c: Context) => {
     try {
         const { username, password } = await c.req.json();
 
-        // Check if user exists and credentials match
+        // Check if user exists
         const user = await userLoginService(username);
         if (!user) {
             return c.json({ error: "Invalid credentials" }, 401);
         }
 
-        console.log("User password from DB: ", user.password);
-        console.log("Entered password: ", password);
-
+        // Compare passwords
         const validPassword = await bcrypt.compare(password, user.password);
-        console.log("Password comparison result: ", validPassword);
-
         if (!validPassword) {
             return c.json({ error: "Invalid credentials" }, 401);
         }
 
-         // Generate token
-         const token = jwt.sign(
+        // Generate token
+        const token = jwt.sign(
             { user_id: user.user_id, username: user.username, role: user.role },
-            SECRET_KEY,
+            JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-
-        return c.json({ message: "Login successful",token , user }, 200);
+        return c.json({ message: "Login successful", token, user }, 200);
 
     } catch (error: any) {
-        return c.json({ error: error?.message }, 400);
+        console.error("Login error:", error);
+        return c.json({ error: "Failed to login" }, 500);
     }
 };

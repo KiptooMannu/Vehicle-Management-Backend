@@ -8,8 +8,8 @@ export const vehicleSpecificationRouter = new Hono();
 
 // GET ALL VEHICLE SPECIFICATIONS - accessible by users and admins
 vehicleSpecificationRouter
-    .get("vehicle-specifications",  getVehicleSpecificationsController)
-    .post("vehicle-specifications", adminRoleAuth, zValidator('json', vehicleSpecificationSchema, (result, c) => {
+    .get("vehicle-specifications", userRoleAuth, getVehicleSpecificationsController)
+    .post("vehicle-specifications",adminRoleAuth, zValidator('json', vehicleSpecificationSchema, (result, c) => {
         if (!result.success) {
             return c.json(result.error, 400);
         }

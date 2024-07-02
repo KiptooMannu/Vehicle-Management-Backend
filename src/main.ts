@@ -4,7 +4,7 @@ import { serve } from '@hono/node-server';
 import { vehicleRouter } from './Vehicles/vehicle.router'; 
 import {userRouter}  from './Users/User.Router'
 import {bookingRouter} from './Booking/Booking.Router'
-import {vehicleSpecificationRouter} from './Vehiclespecication/Vehiclespecication.Router'
+import {vehicleSpecificationRouter} from './Vehiclespecification/Vehiclespecication.Router'
 import {authRouter} from './AUTH/auth.router'
 const app = new Hono().basePath("/api");
 
@@ -38,6 +38,8 @@ app.route("/", userRouter);
 
 
 console.log('Routes registered:', app.routes); 
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
 
 
 // Start server
