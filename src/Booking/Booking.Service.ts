@@ -16,10 +16,10 @@ export const getBookingByIdService = async (booking_id: number): Promise<TSBooki
     return booking;
 };
 
-// Create booking
-export const createBookingServiceWithTransaction = async (booking: TIBooking): Promise<string> => {
-    await db.insert(BookingsTable).values(booking);
-    return "Booking created successfully";
+
+// Updated function to accept transaction
+export const createBookingServiceWithTransaction = async (booking: TIBooking, trx: any) => {
+    await trx.insert(BookingsTable).values(booking);
 };
 
 // Update booking

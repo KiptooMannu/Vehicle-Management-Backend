@@ -34,45 +34,50 @@ export const getBookingByIdController = async (c: Context) => {
     }
 };
 
-// Create booking
+
 export const createBookingController = async (c: Context) => {
     try {
-        const booking = await c.req.json();
-        console.log("Creating Booking")
-
-        // Step 1: Check Vehicle Availability
-        console.log("Proceeding to check vehicle availability...");
-        const isAvailable = await checkVehicleAvailability(booking.vehicle_id, booking.booking_date, booking.return_date);
-        if (!isAvailable) {
-            console.log("Vehicle is not available for the selected dates.");
-            return c.text('Vehicle is not available for the selected dates', 400);
-        }
-
-        // Step 2: Validate Booking
-        console.log("Vehicle is available. Proceeding to validate booking...");
-        const validation = await validateBooking(booking);
-        if (!validation.valid) {
-            console.log("Booking validation failed:", validation.message);
-            return c.text(validation.message, 400);
-        }
-
-        // Step 3: Manage Booking Transaction (includes booking creation and payment processing)
-        console.log("Booking validated. Proceeding to manage booking transaction...");
-        const transactionResult = await manageBookingTransaction(booking);
-        if (!transactionResult.success) {
-            console.error("Booking was created and validated but payment processing failed:", transactionResult.message);
-            return c.text(transactionResult.message, 400);
-        }
-
-        // Final response
-        console.log("Booking and payment processed successfully.");
-        return c.json({ message: 'Booking created and payment processed successfully' }, 201);
+      const booking = await c.req.json();
+      console.log("Creating Booking");
+  
+      // Step 1: Validate Booking
+      console.log("Proceeding to validate booking...");
+      const validation = await validateBooking(booking);
+  
+      if (!validation.valid) {
+        console.log("Booking validation failed:", validation.message);
+        return c.text(validation.message, 400);
+      }
+  
+      // Step 2: Check Vehicle Availability
+      console.log("Proceeding to check vehicle availability...");
+      const isAvailable = await checkVehicleAvailability(booking.vehicle_id, booking.booking_date, booking.return_date);
+  
+      if (!isAvailable) {
+        console.log("Vehicle is not available for the selected dates.");
+        return c.text('Vehicle is not available for the selected dates', 400);
+      }
+  
+      // Step 3: Manage Booking Transaction (includes booking creation and payment processing)
+      console.log("Booking validated. Proceeding to manage booking transaction...");
+      const transactionResult = await manageBookingTransaction(booking);
+  
+      if (!transactionResult.success) {
+        console.error("Booking failed due to payment processing failure:", transactionResult.message);
+        return c.text(transactionResult.message, 400);
+      }
+  
+      // Final response
+      console.log("Booking and payment processed successfully.");
+      return c.json({ message: 'Booking created and payment processed successfully' }, 201);
     } catch (error: any) {
-        console.error("Error creating booking:", error.message || error);
-        return c.json({ error: error?.message }, 500);
+      console.error("Error creating booking:", error.message || error);
+      return c.json({ error: error?.message }, 500);
     }
-};
+  };
 
+
+  
 // Update booking
 export const updateBookingController = async (c: Context) => {
     try {
