@@ -43,13 +43,14 @@ export const loginUserSchema = z.object({
   password: z.string().min(6),
 });
 
-// Register User Schema
+
 export const registerUserSchema = z.object({
   user_id: z.number(),
   username: z.string(),
   password: z.string(),
-  role: z.string().optional(),
+  role: z.enum(["admin", "user"]), // Role must be either "admin" or "user"
 });
+
 
 // Booking Schema
 export const bookingSchema = z.object({

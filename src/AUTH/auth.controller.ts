@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";;
 // Register user
 export const signup = async (c: Context) => {
     try {
-        const { full_name, email, contact_phone, address, username, password } = await c.req.json();
+        const { full_name, email, contact_phone, address, username, password ,role} = await c.req.json();
 
         // Check if user already exists
         const existingUser = await userLoginService(username);
@@ -42,6 +42,7 @@ export const signup = async (c: Context) => {
             username,
             email,
             password: hashedPassword,
+            role: role || "user"
         } as TSAuth);
 
         if (!createUser) {
