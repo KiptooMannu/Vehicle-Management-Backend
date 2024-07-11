@@ -1,5 +1,5 @@
 {
-  "id": "1d6ab129-765a-4d0d-b5f4-bb9e7cafa29c",
+  "id": "9567f565-15d8-4787-8aef-ecc41b59ea6e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -95,7 +95,7 @@
       "columns": {
         "booking_id": {
           "name": "booking_id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },

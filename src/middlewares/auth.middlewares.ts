@@ -1,26 +1,30 @@
-import "dotenv/config";
 import { verify } from "hono/jwt";
 import { Context, Next } from "hono";
 
-interface HonoRequest<T, U> {
+interface DecodedToken {
+    role: string;
+    // Add other properties if needed
+}
+
+interface HonoRequest<T> {
     user?: T;
     // Add other properties if needed
 }
 
 // AUTHENTICATION MIDDLEWARE
-export const verifyToken = async (token: string, secret: string) => {
+export const verifyToken = async (token: string, secret: string): Promise<DecodedToken | null> => {
     try {
-        const decoded = await verify(token, secret);
+        const decoded = await verify(token, secret) as unknown as DecodedToken;
         console.log("Decoded Token:", decoded);  // Debugging statement
         return decoded;
-    } catch (error: any) {
+    } catch (error) {
         console.error("Token verification error:", error);  // Debugging statement
         return null;
     }
 }
 
 // AUTHORIZATION MIDDLEWARE
-export const authMiddleware = async (c: Context & { req: HonoRequest<any, unknown> }, next: Next, requiredRole: string) => {
+export const authMiddleware = async (c: Context & { req: HonoRequest<DecodedToken> }, next: Next, requiredRole: string) => {
     const token = c.req.header("Authorization");
 
     if (!token) {
@@ -36,11 +40,11 @@ export const authMiddleware = async (c: Context & { req: HonoRequest<any, unknow
     }
 
     if (requiredRole === "both") {
-        if ((decoded as any).role === "admin" || (decoded as any).role === "user") {
+        if (decoded.role === "admin" || decoded.role === "user") {
             c.req.user = decoded;
             return next();
         }
-    } else if ((decoded as any).role === requiredRole) {
+    } else if (decoded.role === requiredRole) {
         c.req.user = decoded;
         return next();
     }

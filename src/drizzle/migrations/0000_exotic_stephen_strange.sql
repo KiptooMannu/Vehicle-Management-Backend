@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "auth" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bookings" (
-	"booking_id" serial PRIMARY KEY NOT NULL,
+	"booking_id" uuid PRIMARY KEY NOT NULL,
 	"user_id" integer NOT NULL,
 	"vehicle_id" integer NOT NULL,
 	"location_id" integer NOT NULL,

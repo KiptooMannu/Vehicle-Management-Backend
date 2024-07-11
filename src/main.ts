@@ -10,8 +10,19 @@ import paymentRouter from "./payment/payment.router";
 import customerSupportTicketsRouter from "./customersupportTicket/support.Router";
 import fleetManagementRouter from "./FleetManagement/Fmanagement.Router";
 import locationRouter from "./Location/Location.Router";
+import{ bookingRouterr} from './FB/booking.router'
+import { cors } from 'hono/cors';
 
 const app = new Hono().basePath("/api");
+
+
+
+// Enable CORS
+app.use(cors({
+    origin: '*', 
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowHeaders: ['Content-Type', 'Authorization']
+  }));
 
 // Default route
 app.get('/', (c) => {
@@ -42,6 +53,7 @@ app.route("/", customerSupportTicketsRouter);
 app.route("/", paymentRouter);
 app.route("/", locationRouter);
 app.route("/", fleetManagementRouter);
+app.route("/booking", bookingRouterr)
 
 
 
