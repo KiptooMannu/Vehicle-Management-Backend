@@ -11,8 +11,9 @@ import {
 export const getAllCustomerSupportTicketsController = async (c: Context) => {
   try {
     const tickets = await getAllCustomerSupportTicketsService();
+    console.log (tickets)
     if (!tickets || tickets.length === 0) {
-      return c.text("No customer support tickets found", 404);
+      return c.text("No customer support tickets found");
     }
     return c.json(tickets, 200);
   } catch (error: any) {

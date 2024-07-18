@@ -12,6 +12,7 @@ import fleetManagementRouter from "./FleetManagement/Fmanagement.Router";
 import locationRouter from "./Location/Location.Router";
 import{ bookingRouterr} from './FB/booking.router'
 import { cors } from 'hono/cors';
+import {vehicleSpecificationRouterr} from './vehicleCombined/v.router'
 
 const app = new Hono().basePath("/api");
 
@@ -53,7 +54,8 @@ app.route("/", customerSupportTicketsRouter);
 app.route("/", paymentRouter);
 app.route("/", locationRouter);
 app.route("/", fleetManagementRouter);
-app.route("/booking", bookingRouterr)
+app.route("/booking", bookingRouterr);
+app.route("/" , vehicleSpecificationRouterr);
 
 
 

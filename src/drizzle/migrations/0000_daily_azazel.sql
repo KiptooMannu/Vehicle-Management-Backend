@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS "auth" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bookings" (
-	"booking_id" uuid PRIMARY KEY NOT NULL,
+	"booking_id" serial PRIMARY KEY NOT NULL,
 	"user_id" integer NOT NULL,
 	"vehicle_id" integer NOT NULL,
 	"location_id" integer NOT NULL,
@@ -98,28 +98,31 @@ CREATE TABLE IF NOT EXISTS "users" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "vehicle_specifications" (
 	"vehicle_id" serial PRIMARY KEY NOT NULL,
-	"manufacturer" varchar(100) NOT NULL,
-	"model" varchar(100) NOT NULL,
+	"manufacturer" varchar(255) NOT NULL,
+	"model" varchar(255) NOT NULL,
 	"year" integer NOT NULL,
 	"fuel_type" varchar(50) NOT NULL,
-	"engine_capacity" varchar(50) NOT NULL,
-	"transmission" varchar(50) NOT NULL,
-	"seating_capacity" integer NOT NULL,
-	"color" varchar(50) NOT NULL,
-	"features" text NOT NULL
+	"engine_capacity" varchar(50),
+	"transmission" varchar(50),
+	"seating_capacity" integer,
+	"color" varchar(50),
+	"features" text,
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "vehicles" (
 	"vehicle_id" serial PRIMARY KEY NOT NULL,
 	"vehicleSpec_id" integer,
-	"rental_rate" numeric(10, 2) NOT NULL,
+	"rental_rate" numeric NOT NULL,
 	"availability" boolean DEFAULT true,
-	"created_at" date DEFAULT CURRENT_TIMESTAMP,
-	"updated_at" date DEFAULT CURRENT_TIMESTAMP
+	"vehicle_image" varchar(255),
+	"created_at" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "auth" ADD CONSTRAINT "auth_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "auth" ADD CONSTRAINT "auth_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -161,7 +164,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "vehicles" ADD CONSTRAINT "vehicles_vehicleSpec_id_vehicle_specifications_vehicle_id_fk" FOREIGN KEY ("vehicleSpec_id") REFERENCES "public"."vehicle_specifications"("vehicle_id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "vehicles" ADD CONSTRAINT "vehicles_vehicleSpec_id_vehicle_specifications_vehicle_id_fk" FOREIGN KEY ("vehicleSpec_id") REFERENCES "public"."vehicle_specifications"("vehicle_id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

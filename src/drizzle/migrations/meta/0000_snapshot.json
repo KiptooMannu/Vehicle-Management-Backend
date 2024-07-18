@@ -1,5 +1,5 @@
 {
-  "id": "9567f565-15d8-4787-8aef-ecc41b59ea6e",
+  "id": "6609a207-594c-4fe3-8a57-73ee93336079",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -67,7 +67,7 @@
           "columnsTo": [
             "user_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -95,7 +95,7 @@
       "columns": {
         "booking_id": {
           "name": "booking_id",
-          "type": "uuid",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -563,13 +563,13 @@
         },
         "manufacturer": {
           "name": "manufacturer",
-          "type": "varchar(100)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
         "model": {
           "name": "model",
-          "type": "varchar(100)",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -589,31 +589,45 @@
           "name": "engine_capacity",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "transmission": {
           "name": "transmission",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "seating_capacity": {
           "name": "seating_capacity",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "color": {
           "name": "color",
           "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "features": {
           "name": "features",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -639,7 +653,7 @@
         },
         "rental_rate": {
           "name": "rental_rate",
-          "type": "numeric(10, 2)",
+          "type": "numeric",
           "primaryKey": false,
           "notNull": true
         },
@@ -650,19 +664,25 @@
           "notNull": false,
           "default": true
         },
+        "vehicle_image": {
+          "name": "vehicle_image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "date",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "default": "CURRENT_TIMESTAMP"
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -677,7 +697,7 @@
           "columnsTo": [
             "vehicle_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

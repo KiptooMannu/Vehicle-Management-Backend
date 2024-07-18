@@ -64,6 +64,7 @@ export const loginUser = async (c: Context) => {
 
         // Check if user exists
         const user = await userLoginService(username);
+        console.log(user)
         if (!user) {
             return c.json({ error: "Invalid credentials" }, 401);
         }
@@ -76,10 +77,11 @@ export const loginUser = async (c: Context) => {
 
         // Generate token
         const token = jwt.sign(
-            { user_id: user.user_id, username: user.username, role: user.role },
+            { user_id: user?.user_id, username: user?.username, role: user?.role },
             JWT_SECRET,
             { expiresIn: '1h' }
         );
+        delete user?.password;
 
         return c.json({ message: "Login successful", token, user }, 200);
 

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // User Schema
 export const userSchema = z.object({
-  fullname: z.string().min(1), // Ensures fullname is not empty
+  full_name: z.string().min(1), // Ensures fullname is not empty
   email: z.string().email(),
   password: z.string().min(6),
   contact_phone: z.string().optional(),
@@ -19,6 +19,7 @@ export const authSchema = z.object({
 
 // Define the schema for vehicle specifications
 export const vehicleSpecificationSchema = z.object({
+  vehicle_id: z.number().int().optional(),
   manufacturer: z.string().min(1).max(100),
   model: z.string().min(1).max(100),
   year: z.number().int(),
@@ -65,3 +66,5 @@ export const bookingSchema = z.object({
   created_at: z.string().optional(),
   updated_at: z.string().optional(),
 });
+
+

@@ -8,13 +8,13 @@ import { adminRoleAuth, userRoleAuth, bothRoleAuth } from '../middlewares/auth.m
 export const bookingRouterr = new Hono();
 
 // GET ALL BOOKINGS
-bookingRouterr.get("/bookings", userRoleAuth, getBookingsController);
+bookingRouterr.get("/bookingszzz",  getBookingsController);
 
 // GET BOOKING BY ID
-bookingRouterr.get("/bookings/:id", bothRoleAuth, getBookingByIdController);
+bookingRouterr.get("/bookings/:id",  getBookingByIdController);
 
 // CREATE BOOKING
-bookingRouterr.post("/bookings", zValidator('json', bookingSchema, (result, c) => {
+bookingRouterr.post("/bookingszzz", zValidator('json', bookingSchema, (result, c) => {
     if (!result.success) {
         return c.json(result.error, 400);
     }
