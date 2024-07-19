@@ -81,7 +81,7 @@ export const loginUser = async (c: Context) => {
             JWT_SECRET,
             { expiresIn: '1h' }
         );
-        delete user?.password;
+        // delete user?.password;
 
         return c.json({ message: "Login successful", token, user }, 200);
 
