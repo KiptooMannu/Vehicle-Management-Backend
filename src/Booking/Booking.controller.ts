@@ -1,6 +1,5 @@
 import { Context } from 'hono';
-import { getAllBookingsService, getBookingByIdService, updateBookingService, deleteBookingService } from './Booking.Service';
-import { manageBookingTransaction } from './TransactionService';
+import { getAllBookingsService, getBookingByIdService, createBookingService, updateBookingService, deleteBookingService } from './Booking.Service';
 import { validateBooking } from './BookingValidation';
 
 // Get all bookings
@@ -38,8 +37,6 @@ export const createBookingController = async (c: Context) => {
         const booking = await c.req.json();
         console.log("Creating Booking");
 
-        // Step 1: Validate Booking
-        console.log("Proceeding to validate booking...");
         const validation = await validateBooking(booking);
 
         if (!validation.valid) {
@@ -47,18 +44,15 @@ export const createBookingController = async (c: Context) => {
             return c.text(validation.message, 400);
         }
 
-        // Step 2: Manage Booking Transaction (includes booking creation and payment processing)
-        console.log("Booking validated. Proceeding to manage booking transaction...");
-        const transactionResult = await manageBookingTransaction(booking);
+        const newBooking = await createBookingService(booking);
 
-        if (!transactionResult.success) {
-            console.error("Booking failed due to payment processing failure:", transactionResult.message);
-            return c.text(transactionResult.message, 400);
+        if (!newBooking) {
+            console.error("Booking failed.");
+            return c.text("Booking not created", 400);
         }
 
-        // Final response
-        console.log("Booking and payment processed successfully.");
-        return c.json({ message: 'Booking created and payment processed successfully' }, 201);
+        console.log("Booking processed successfully.");
+        return c.json(newBooking, 201); // Return the newly created booking
     } catch (error: any) {
         console.error("Error creating booking:", error.message || error);
         return c.json({ error: error?.message }, 500);

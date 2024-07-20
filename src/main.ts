@@ -2,28 +2,26 @@ import { Hono } from "hono";
 import "dotenv/config";
 import { serve } from '@hono/node-server';
 import { vehicleRouter } from './Vehicles/vehicle.router'; 
-import {userRouter}  from './Users/User.Router'
-import {bookingRouter} from './Booking/Booking.Router'
-import {vehicleSpecificationRouter} from './Vehiclespecification/Vehiclespecication.Router'
-import {authRouter} from './AUTH/auth.router'
+import { userRouter } from './Users/User.Router';
+import { bookingRouter } from './Booking/Booking.Router';
+import { vehicleSpecificationRouter } from './Vehiclespecification/Vehiclespecication.Router';
+import { authRouter } from './AUTH/auth.router';
 import paymentRouter from "./payment/payment.router";
 import customerSupportTicketsRouter from "./customersupportTicket/support.Router";
 import fleetManagementRouter from "./FleetManagement/Fmanagement.Router";
 import locationRouter from "./Location/Location.Router";
-import{ bookingRouterr} from './FB/booking.router'
+import { bookingRouterr } from './FB/booking.router';
 import { cors } from 'hono/cors';
-import {vehicleSpecificationRouterr} from './vehicleCombined/v.router'
+import { vehicleSpecificationRouterr } from './vehicleCombined/v.router';
 
 const app = new Hono().basePath("/api");
 
-
-
-// Enable CORS
 app.use(cors({
-    origin: '*', 
+    origin: 'http://localhost:5173',
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowHeaders: ['Content-Type', 'Authorization']
-  }));
+}));
+
 
 // Default route
 app.get('/', (c) => {
@@ -44,7 +42,7 @@ app.get('/', (c) => {
     return c.html(htmlContent);
 });
 
-// Register vehicle router
+// Register routers
 app.route("/", vehicleRouter);
 app.route("/", authRouter);
 app.route("/", bookingRouter);
@@ -55,15 +53,10 @@ app.route("/", paymentRouter);
 app.route("/", locationRouter);
 app.route("/", fleetManagementRouter);
 app.route("/booking", bookingRouterr);
-app.route("/" , vehicleSpecificationRouterr);
+app.route("/", vehicleSpecificationRouterr);
 
-
-
-
-console.log('Routes registered:', app.routes); 
+console.log('Routes registered:', app.routes);
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
-
-
 
 // Start server
 serve({

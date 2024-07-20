@@ -10,3 +10,7 @@ const pool = new Pool({
 
 export const db: NodePgDatabase<typeof schema> = drizzle(pool, { schema, logger: true });
 
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: '2024-06-20',
+  typescript: true,
+});
