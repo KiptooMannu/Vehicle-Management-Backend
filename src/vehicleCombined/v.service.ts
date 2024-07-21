@@ -41,6 +41,7 @@ export const getVehicleWithSpecs = async () => {
             vehicleSpec_id: true,
             rental_rate: true,
             availability: true,
+            vehicle_image: true,
         },
         with: {
             vehicleSpec: {
@@ -112,46 +113,63 @@ const vehicleSpecSchema = z.object({
   });
   
   const vehicleSchema = z.object({
+ 
     rental_rate: z.number(),
     availability: z.boolean().optional(),
     vehicle_image: z.string().optional()
   });
   
- // Service to insert data into both tables
- export const createVehicleWithSpecification = async (vehicleSpec: TIVehicleSpecification, vehicle: TIVehicle) => {
-    console.log('Vehicle Spec:', vehicleSpec);
-    console.log('Vehicle:', vehicle);
-  
-    // Validate the input data
-    vehicleSpecSchema.parse(vehicleSpec);
-    vehicleSchema.parse(vehicle);
-  
+
+
+export const createVehicleWithSpecification = async (vehicleSpec: TIVehicleSpecification, vehicle: TIVehicle) => {
+  // Validate the input data
+  vehicleSpecSchema.parse(vehicleSpec);
+  vehicleSchema.parse(vehicle);
+
+  let vehicleSpecId: number | null = null; // Initialize with null
+
+  try {
     // Insert data into the vehicle_specifications table
     const newVehicleSpec = await db.insert(VehicleSpecificationsTable)
       .values(vehicleSpec)
       .returning({ id: VehicleSpecificationsTable.vehicle_id })
       .execute();
-  
-    const vehicleSpecId = newVehicleSpec[0].id;
-  
-    // Insert data into the vehicles table
-    try {
-      await db.insert(VehiclesTable)
-        .values({
-          vehicle_id: vehicleSpecId,
-          rental_rate: vehicle.rental_rate,
-          availability: vehicle.availability,
-        //   vehicle_image: vehicle.vehicle_image,
-        })
-        .execute();
-  
-      return 'Vehicle with specifications created successfully';
-    } catch (error) {
-      // Rollback: delete the vehicle_specification if the second insert fails
-      await db.delete(VehicleSpecificationsTable).where(eq(VehicleSpecificationsTable.vehicle_id, vehicleSpecId)).execute();
-      throw new Error('Creation failed. Please try again.');
+
+    console.log('newVehicleSpec:', newVehicleSpec); // Log the returned data
+
+    if (newVehicleSpec && newVehicleSpec.length > 0) {
+      vehicleSpecId = newVehicleSpec[0].id;
+    } else {
+      throw new Error('Failed to retrieve vehicle specification ID');
     }
-  };
+
+    // Insert data into the vehicles table
+    await db.insert(VehiclesTable)
+      .values({
+        vehicle_id: vehicleSpecId,
+        rental_rate: vehicle.rental_rate,
+        availability: vehicle.availability,
+        vehicle_image: vehicle.vehicle_image,
+        created_at: new Date(), // Ensure default values are set correctly
+        updated_at: new Date(), // Ensure default values are set correctly
+      })
+      .execute();
+
+    return 'Vehicle with specifications created successfully';
+
+  } catch (error) {
+    // Rollback: delete the vehicle_specification if the second insert fails
+    if (vehicleSpecId !== null) {
+      await db.delete(VehicleSpecificationsTable)
+        .where(eq(VehicleSpecificationsTable.vehicle_id, vehicleSpecId))
+        .execute();
+    }
+
+    console.error('Error creating vehicle with specification:', error);
+    throw new Error('Creation failed. Please try again.');
+  }
+};
+
   
 
   export const updateVehicleWithSpecification = async (vehicleSpec: TIVehicleSpecification, vehicle: TIVehicle, vehicleSpecId: number, rental_rate: any, availability: any) => {
@@ -174,6 +192,7 @@ const vehicleSpecSchema = z.object({
         .set({
           rental_rate: vehicle.rental_rate,
           availability: vehicle.availability,
+          vehicle_image: vehicle.vehicle_image,
     
         })
         .where(eq(VehiclesTable.vehicle_id, vehicleSpecId))

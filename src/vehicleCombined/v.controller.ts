@@ -113,7 +113,6 @@ export const getVehicleWithSpecsByIdController = async (c:Context) => {
         return c.json({error:error.message}, 400);
     }
 }
-
 export const createVehicleWithSpecController = async (c: Context) => {
     try {
       const requestBody = await c.req.json();
@@ -128,7 +127,7 @@ export const createVehicleWithSpecController = async (c: Context) => {
       console.log('Received vehicle:', vehicle);
   
       const result = await createVehicleWithSpecification(vehicleSpec, vehicle);
-      return c.json(result, 201);
+      return c.json({ message: result }, 201);
     } catch (error: any) {
       console.error('Error in createVehicleWithSpecController:', error);
       return c.json({ error: error.message }, 500);
@@ -136,4 +135,31 @@ export const createVehicleWithSpecController = async (c: Context) => {
   };
   
   
+  
+  export const updateVehicleController = async (c: Context) => {
+    try {
+      const { vehicleSpec, vehicle, rental_rate, availability } = await c.req.json();
+      console.log('Received vehicleSpec:', vehicleSpec);
+      console.log('Received vehicle:', vehicle);
+      console.log('Received rental_rate:', rental_rate);
+      console.log('Received availability:', availability);
+      
+      const vehicleSpecId = parseInt(c.req.param('id'), 10);
+  
+      if (!vehicleSpec || !vehicle || rental_rate === undefined || availability === undefined) {
+        throw new Error('Missing required data');
+      }
+  
+      const result = await updateVehicleWithSpecification(vehicleSpec, vehicle, vehicleSpecId, rental_rate, availability);
+      
+      return c.json({ message: result }, 200);
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        console.error('Validation error:', error.errors);
+        return c.json({ message: 'Validation failed.', errors: error.errors }, 400);
+      }
+      console.error('Error updating vehicle:', error.message);
+      return c.json({ message: 'Update failed. Please try again.', error: error.message }, 500);
+    }
+  };
   
