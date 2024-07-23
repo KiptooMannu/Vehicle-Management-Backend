@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { getAllBookingsService, getBookingByIdService, createBookingService, updateBookingService, deleteBookingService } from './Booking.Service';
+import { getAllBookingsService, getBookingByIdService, createBookingService,getUserWithBookingDetailsById, updateBookingService, deleteBookingService } from './Booking.Service';
 import { validateBooking } from './BookingValidation';
 
 // Get all bookings
@@ -95,3 +95,21 @@ export const deleteBookingController = async (c: Context) => {
         return c.json({ error: error?.message }, 500);
     }
 };
+
+
+
+
+export const getBookingsWithIdController = async  (c: Context) =>{
+    const userId = parseInt(c.req.param('userId'), 10);
+
+    if(isNaN(userId)){
+        return c.json({error: 'Invalid user ID'}, 400)
+    }
+
+    try {
+        const bookings = await getUserWithBookingDetailsById(userId);
+        return c.json(bookings, 200);
+    } catch (error: any) {
+      return c.json({error: error.message}, 500)  
+    }
+}

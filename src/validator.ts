@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// User Schema
 export const userSchema = z.object({
   full_name: z.string().min(1), // Ensures fullname is not empty
   email: z.string().email(),
@@ -9,6 +8,7 @@ export const userSchema = z.object({
   phone_verified: z.boolean().optional(),
   email_verified: z.boolean().optional(),
   confirmation_code: z.string().optional(),
+  profile_image: z.string().optional() // Optional field
 });
 
 // Define your authentication schema using Zod
@@ -68,3 +68,6 @@ export const bookingSchema = z.object({
 });
 
 
+export const vehicleSchema = z.object({
+  rental_rate: z.number(), 
+});

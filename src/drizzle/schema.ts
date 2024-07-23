@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 
 // Enums
 export const roleEnum = pgEnum("role", ["user", "admin"]);
-export const bookingStatusEnum = pgEnum("booking_status", ["Pending", "Confirmed", "Cancelled"]);
+export const bookingStatusEnum = pgEnum("booking_status", ["Pending", "Confirmed", "Cancelled" , "Completed"]);
 export const paymentStatusEnum = pgEnum("payment_status", ["Pending", "Completed", "Failed"]);
 
 // Users Table
@@ -16,7 +16,8 @@ export const UsersTable = pgTable("users", {
   address: varchar("address", { length: 255 }).notNull(),
   role: roleEnum("role").default("user"),
   created_at: date("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updated_at: date("updated_at").default(sql`CURRENT_TIMESTAMP`)
+  updated_at: date("updated_at").default(sql`CURRENT_TIMESTAMP`),
+  profile_image: varchar("profile_image", { length: 255 }) 
 });
 
 /// Authentication Table

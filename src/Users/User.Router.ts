@@ -9,7 +9,7 @@ export const userRouter = new Hono();
 
 // GET ALL USERS - accessible by users and admins
 userRouter
-    .get("users", userRoleAuth,getUsersController)
+    .get("users", getUsersController)
     .post("users", zValidator('json', userSchema, (result, c) => {
         if (!result.success) {
             return c.json(result.error, 400);

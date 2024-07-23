@@ -17,7 +17,7 @@ import { vehicleSpecificationRouterr } from './vehicleCombined/v.router';
 const app = new Hono().basePath("/api");
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: '*',
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowHeaders: ['Content-Type', 'Authorization']
 }));

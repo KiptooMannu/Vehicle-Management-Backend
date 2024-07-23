@@ -17,6 +17,9 @@ async function migration() {
     // Add vehicle_image column to vehicles table if it does not exist
     await db.execute(sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS vehicle_image VARCHAR(255);`);
 
+    // Add profile_image column to users table if it does not exist
+    await db.execute(sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image VARCHAR(255);`);
+
     console.log('======== Migrations completed ========');
   } catch (err) {
     const error = err as Error; // Cast error to Error type

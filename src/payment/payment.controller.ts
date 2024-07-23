@@ -114,7 +114,7 @@ export const createCheckoutSessionController = async (c: Context) => {
             line_items,
             mode: 'payment',
             success_url: `${ClientURL}/payment-success`,
-            cancel_url: `${ClientURL}/`,
+            cancel_url: `${ClientURL}/payment-canceled`,
         };
 
         const session: Stripe.Checkout.Session = await stripe.checkout.sessions.create(sessionParams);
